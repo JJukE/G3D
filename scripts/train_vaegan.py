@@ -97,7 +97,7 @@ def train():
     if torch.cuda.is_available():
         point_ae = point_ae.cuda()
     point_ae.eval()
-    print('============================================================\n\n')
+    print('============================================================\n')
 
     # instantiate scene graph dataset for training
     print('============================================================')
@@ -126,7 +126,7 @@ def train():
             recompute_feats=False)
 
     collate_fn = collate_fn_vaegan_points
-    print('============================================================\n\n')
+    print('============================================================\n')
     
     # instantiate data loader from dataset
     print('============================================================')
@@ -146,7 +146,7 @@ def train():
         os.makedirs(args.outf)
     except OSError:
         pass
-    print('============================================================\n\n')
+    print('============================================================\n')
     
     # instantiate the model
     print('============================================================')
@@ -179,7 +179,7 @@ def train():
     print('optimizer initializing')
     params = filter(lambda p: p.requires_grad,list(model.parameters()) )
     optimizer = optim.Adam(params, lr=args.lr)
-    print('============================================================\n\n')
+    print('============================================================\n')
 
     print("---- Model and Dataset built ----")
 
@@ -426,6 +426,7 @@ def train():
 
         if epoch % 5 == 0:
             model.save(args.exp, args.outf, epoch)
+            print("{}th model saved at {}".format(epoch, args.outf))
 
     writer.close()
 
