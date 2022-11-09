@@ -7,6 +7,7 @@ import numpy as np
 import torch
 import torch.nn.parallel
 import torch.utils.data
+import pickle
 
 from model.VAE import VAE
 from dataset.dataset import RIODatasetSceneGraph, collate_fn_vaegan, collate_fn_vaegan_points
@@ -547,6 +548,14 @@ def validate_constrains_loop(testdataloader, model, with_diversity=True, with_an
                 colors.append(rgb)
             colors = np.asarray(colors) / 255.
 
+            # arguments for local visualization with open3d
+            args_for_viz = [boxes_pred_den, angles_pred, vocab['object_idx_to_name'], 'points', dec_objs,
+                            shapes_pred.cpu().detach(), colors, True]
+            print(args_for_viz)
+            with open("/root/graphto3d/viz/args_for_viz.pickle", "wb") as f:
+                for i in range(len(args_for_viz)):
+                    pickle.dump(args_for_viz[i], f)
+            
             # layout and shape visualization through open3d
             render(boxes_pred_den, angles_pred, classes=vocab['object_idx_to_name'], render_type='points', classed_idx=dec_objs,
                    shapes_pred=shapes_pred.cpu().detach(), colors=colors, render_boxes=True)
