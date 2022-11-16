@@ -16,7 +16,7 @@ def render(predBoxes, predAngles=None, classes=None, classed_idx=None, shapes_pr
         colors = np.asarray(json.load(open('graphs/color_palette.json', 'r'))['rgb']) / 255.
 
     vis = o3d.visualization.Visualizer()
-    vis.create_window()
+    vis.create_window(visible=False)
 
     ren_opt = vis.get_render_option()
     ren_opt.mesh_show_back_face = True
@@ -89,6 +89,10 @@ def render(predBoxes, predAngles=None, classes=None, classed_idx=None, shapes_pr
                 vis.add_geometry(g)
 
     vis.add_geometry(o3d.geometry.TriangleMesh.create_coordinate_frame(size=0.6, origin=[0, 0, 2]))
+    o3d.io.write_point_cloud("/root/graphto3d/viz/pc.pcd", vis)
+    o3d.io.write_triangle_mesh("/root/graphto3d/viz/mesh.ply", vis)
+    o3d.io.write_triangle_mesh("/root/graphto3d/viz/textured_mesh.obj", vis, write_triangle_uvs=True)
+    vis.capture_screen_image("/root/graphto3d/viz/image.jpg", do_render=True)
     vis.poll_events()
     vis.run()
     vis.destroy_window()
