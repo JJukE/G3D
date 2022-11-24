@@ -1,0 +1,23 @@
+// Scene Graphv1
+digraph {
+	1 [label=floor color="#aec7e8" fontname=helvetica style=filled]
+	15 [label=pillow color="#dbdb8d" fontname=helvetica style=filled]
+	36 [label=ceiling color="#60cfd1" fontname=helvetica style=filled]
+	28 [label=shelf color="#5ba38a" fontname=helvetica style=filled]
+	22 [label=pillow color="#cab934" fontname=helvetica style=filled]
+	29 [label=box color="#99629c" fontname=helvetica style=filled]
+	30 [label=box color="#8c9965" fontname=helvetica style=filled]
+	3 [label=blanket color="#ffbb78" fontname=helvetica style=filled]
+	2 [label=bed color="#1f77b4" fontname=helvetica style=filled]
+	2 -> 1 [label="standing on" color=grey]
+	3 -> 2 [label="lying on" color=grey]
+	15 -> 2 [label="lying on" color=grey]
+	22 -> 2 [label="lying on" color=grey]
+	28 -> 1 [label="standing on" color=grey]
+	30 -> 29 [label="lying in, lower than" color=grey]
+	2 -> 28 [label=right color=grey]
+	3 -> 15 [label="front, close by" color=grey]
+	3 -> 22 [label="front, close by" color=grey]
+	15 -> 22 [label="close by" color=grey]
+	22 -> 15 [label="smaller than" color=grey]
+}

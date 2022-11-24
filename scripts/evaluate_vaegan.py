@@ -470,7 +470,8 @@ def validate_constrains_loop(testdataloader, model, with_diversity=True, with_an
 
     all_pred_shapes_exp = {} # for export
     all_pred_boxes_exp = {}
-
+    
+    counter = 0
     for i, data in enumerate(testdataloader, 0):
         try:
             dec_objs, dec_triples = data['decoder']['objs'], data['decoder']['tripltes']
@@ -531,11 +532,11 @@ def validate_constrains_loop(testdataloader, model, with_diversity=True, with_an
             for i in range(len(dec_objs) - 1):
                 all_pred_boxes_exp[scan][split][instances[i]] = list(boxes_pred_exp[i])
                 all_pred_shapes_exp[scan][split][instances[i]] = list(shapes_pred_exp[i])
-
-        if args.visualize:
+    
+        if args.visualize and counter < 100:
             # scene graph visualization. saves a picture of each graph to the outfolder
             colormap = vis_graph(use_sampled_graphs=False, scan_id=scan, split=str(split), data_path=args.dataset,
-                                 outfolder=args.exp + "/vis_graphs/")
+                                outfolder="/root/graphto3d/viz", scene_index=counter)
             colors = []
             # convert colors to expected format
             def hex_to_rgb(hex):
@@ -551,14 +552,20 @@ def validate_constrains_loop(testdataloader, model, with_diversity=True, with_an
             # arguments for local visualization with open3d
             args_for_viz = [boxes_pred_den, angles_pred, vocab['object_idx_to_name'], 'points', dec_objs,
                             shapes_pred.cpu().detach(), colors, True]
-            print(args_for_viz)
+            # print('shape of shapes_pred: ', shapes_pred.shape)
+            # print('shape of shapes_pred.cpu().detach(): ', shapes_pred.cpu().detach().shape)
             with open("/root/graphto3d/viz/args_for_viz.pickle", "wb") as f:
                 for i in range(len(args_for_viz)):
                     pickle.dump(args_for_viz[i], f)
             
             # layout and shape visualization through open3d
             render(boxes_pred_den, angles_pred, classes=vocab['object_idx_to_name'], render_type='points', classed_idx=dec_objs,
-                   shapes_pred=shapes_pred.cpu().detach(), colors=colors, render_boxes=True)
+                shapes_pred=shapes_pred.cpu().detach(), colors=colors, render_boxes=True, scene_index=counter, scan_id=scan)
+            
+            render(boxes_pred_den, angles_pred, classes=vocab['object_idx_to_name'], render_type='meshes', classed_idx=dec_objs,
+                    shapes_pred=shapes_pred.cpu().detach(), colors=colors, render_boxes=True, scene_index=counter, scan_id=scan)
+        
+        counter += 1
 
         all_pred_boxes.append(boxes_pred_den.cpu().detach())
         if with_diversity:

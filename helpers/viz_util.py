@@ -91,7 +91,7 @@ def load_semantic_scene_graphs(json_relationships, json_objects):
             if scan + "_" + split not in scene_graphs:
                 scene_graphs[scan + "_" + split] = {}
                 scene_graphs[scan + "_" + split]['objects'] = []
-                print("WARNING: no objects for this scene")
+                # print("WARNING: no objects for this scene")
             scene_graphs[scan + "_" + split]['relationships'] = []
             for k in s["objects"].keys():
                 ob = s['objects'][k]

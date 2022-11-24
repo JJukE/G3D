@@ -7,6 +7,7 @@ import torch
 import torch.nn.parallel
 import torch.optim as optim
 import torch.utils.data
+
 from dataset.dataset import RIODatasetSceneGraph, collate_fn_vaegan_points
 from model.VAE import VAE
 from model.atlasnet import AE_AtlasNet
@@ -72,6 +73,21 @@ parser.add_argument('--replace_latent', default=True, type=bool_flag)
 parser.add_argument('--network_type', default='shared', choices=['dis', 'sln', 'mlp', 'shared'], type=str)
 
 args = parser.parse_args()
+
+#=========================================================================
+# arguments for debugging
+#=========================================================================
+args.network_type = 'shared'
+args.exp = './expriments/shared_model_221118'
+args.dataset = './GT'
+args.dataset_3RScan = '/root/dev/G3D/3RScan'
+args.path2atlas = './experiments/atlasnet/model_70.pth'
+args.with_manipulator = False
+args.with_points = False
+args.with_feats = True
+args.residual = True
+
+
 print(args)
 
 
@@ -424,9 +440,9 @@ def train():
             writer.add_scalar('Train Loss loss_genShapeFake', loss_genShapeFake, counter)
             writer.add_scalar('Train Loss loss_shape_fake_g', loss_shape_fake_g, counter)
 
-        if epoch % 5 == 0:
-            model.save(args.exp, args.outf, epoch)
-            print("{}th model saved at {}".format(epoch, args.outf))
+        # if epoch % 5 == 0:
+        #     model.save(args.exp, args.outf, epoch)
+        #     print("{}th model saved at {}".format(epoch, args.outf))
 
     writer.close()
 

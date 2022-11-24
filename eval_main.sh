@@ -5,4 +5,4 @@ python /root/graphto3d/scripts/evaluate_vaegan.py \
 --exp /root/graphto3d/experiments/final_checkpoints/shared \
 --with_points False --with_feats True --epoch 100 \
 --path2atlas /root/graphto3d/experiments/atlasnet/model_70.pth \
---evaluate_diversity False --visualize True
+--evaluate_diversity False --visualize True --export_3d True

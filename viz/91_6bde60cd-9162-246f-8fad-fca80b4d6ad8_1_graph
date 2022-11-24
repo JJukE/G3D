@@ -1,0 +1,13 @@
+// Scene Graphv1
+digraph {
+	3 [label=wall color="#ffbb78" fontname=helvetica style=filled]
+	7 [label=sofa color="#ff9896" fontname=helvetica style=filled]
+	8 [label=armchair color="#d62728" fontname=helvetica style=filled]
+	1 [label=floor color="#aec7e8" fontname=helvetica style=filled]
+	2 [label=carpet color="#1f77b4" fontname=helvetica style=filled]
+	2 -> 1 [label="lying on" color=grey]
+	3 -> 1 [label="attached to" color=grey]
+	7 -> 2 [label=cover color=grey]
+	8 -> 2 [label=cover color=grey]
+	7 -> 8 [label="front, left" color=grey]
+}

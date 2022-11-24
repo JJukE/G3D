@@ -1,0 +1,20 @@
+// Scene Graphv1
+digraph {
+	1 [label=floor color="#aec7e8" fontname=helvetica style=filled]
+	23 [label=radiator color="#33b0cb" fontname=helvetica style=filled]
+	24 [label=curtain color="#c83683" fontname=helvetica style=filled]
+	46 [label=object color="#5c8b5a" fontname=helvetica style=filled]
+	47 [label=wall color="#645590" fontname=helvetica style=filled]
+	4 [label="trash can" color="#ff7f0e" fontname=helvetica style=filled]
+	16 [label=ceiling color="#bcbd22" fontname=helvetica style=filled]
+	5 [label="trash can" color="#98df8a" fontname=helvetica style=filled]
+	25 [label=wall color="#5cc13d" fontname=helvetica style=filled]
+	4 -> 1 [label="standing on" color=grey]
+	5 -> 1 [label="standing on" color=grey]
+	23 -> 47 [label="connected to" color=grey]
+	24 -> 16 [label="attached to" color=grey]
+	46 -> 23 [label="supported by" color=grey]
+	47 -> 1 [label="attached to" color=grey]
+	4 -> 5 [label="right, close by" color=grey]
+	5 -> 4 [label=behind color=grey]
+}

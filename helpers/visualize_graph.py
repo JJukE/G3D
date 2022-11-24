@@ -5,7 +5,7 @@ import json
 
 
 def visualize_scene_graph(graph, relationships, rel_filter_in = [], rel_filter_out = [], obj_ids = [], title ="", scan_id="",
-													outfolder="./vis_graphs/"):
+													outfolder="./vis_graphs/", scene_index=0):
 	g = Digraph(comment='Scene Graph' + title, format='png')
 
 	for (i,obj) in enumerate(graph["objects"]):
@@ -19,7 +19,7 @@ def visualize_scene_graph(graph, relationships, rel_filter_in = [], rel_filter_o
 	else:
 		edge_mask = None
 	draw_edges(g, graph["relationships"], relationships, rel_filter_in, rel_filter_out, obj_ids, edge_mask)
-	g.render(outfolder + scan_id)
+	g.render(outfolder + "/" + str(scene_index) + "_" + scan_id + "_graph")
 
 
 def draw_edges(g, graph_relationships, relationships, rel_filter_in, rel_filter_out, obj_ids, edge_mask=None):
@@ -49,8 +49,7 @@ def draw_edges(g, graph_relationships, relationships, rel_filter_in, rel_filter_
 
 
 def run(use_sampled_graphs=True, scan_id="4d3d82b6-8cf4-2e04-830a-4303fa0e79c7", split=None, with_manipulation=False,
-				data_path='./GT', outfolder="./vis_graphs/", graphfile='graphs_layout.yml'):
-
+				data_path='./GT', outfolder="./vis_graphs/", graphfile='graphs_layout.yml', scene_index=0):
 	if use_sampled_graphs:
 		# use this option to customize your own graphs in the yaml format
 		palette_json = os.path.join(data_path, "color_palette.json")
@@ -80,11 +79,11 @@ def run(use_sampled_graphs=True, scan_id="4d3d82b6-8cf4-2e04-830a-4303fa0e79c7",
 	filter_dict_out = [] # ["left", "right", "behind", "front", "same as", "same symmetry as", "bigger than", "lower than", "higher than", "close by"]
 	for scan_id in [scan_id]:
 		visualize_scene_graph(graph[scan_id], relationships, filter_dict_in, filter_dict_out, [], "v1", scan_id=scan_id,
-													outfolder=outfolder)
+													outfolder=outfolder, scene_index=scene_index)
 		if with_manipulation and use_sampled_graphs:
 			# manipulation only supported for custom graphs
 			visualize_scene_graph(graph_mani[scan_id], relationships, filter_dict_in, filter_dict_out, [], "v1", scan_id=scan_id + "_mani",
-														outfolder=outfolder)
+														outfolder=outfolder, scene_index=scene_index)
 
 	idx = [o['id'] for o in graph[scan_id]['objects']]
 	color = [o['ply_color'] for o in graph[scan_id]['objects']]
