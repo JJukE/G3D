@@ -308,7 +308,7 @@ class VAE(nn.Module):
         elif self.type_ == 'shared':
             with torch.no_grad():
                 z, log_var = self.vae.encoder(objs, triples, boxes, feats, attributes, angles)
-                return (z, log_var), (z, log_var)
+                return (z, log_var), (z, log_var) # (mu_box, logvar_box), (mu_shape, logvar_shape)
 
     def encode_shape(self, objs, triples, feats, attributes=None):
         if self.type_ == 'dis':

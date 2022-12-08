@@ -40,8 +40,19 @@ parser.add_argument('--recompute_stats', type=bool_flag, default=False, help='Re
 parser.add_argument('--evaluate_diversity', type=bool_flag, default=False, help='Computes diversity based on multiple predictions')
 parser.add_argument('--visualize', default=False, type=bool_flag)
 parser.add_argument('--export_3d', default=False, type=bool_flag, help='Export the generated shapes and boxes in json files for future use')
+parser.add_argument('--debug_mode', default='True', type=bool_flag)
 args = parser.parse_args()
 
+if args.debug_mode:
+    args.dataset_3RScan = '/root/dev/G3D/3RScan'
+    args.exp = '/root/graphto3d/experiments/model_221124'
+    args.with_points = True
+    args.with_feats = True
+    args.epoch = 100
+    args.path2atlas = '/root/graphto3d/experiments/atlasnet/model_70.pth'
+    args.evaluate_diversity = False
+    args.visualize = False
+    args.export_3d = True
 
 def evaluate():
     print(torch.__version__)
@@ -290,10 +301,12 @@ def validate_constrains_loop_w_changes(testdataloader, model, with_diversity=Tru
         attributes = None
 
         with torch.no_grad():
+            # get features from graph-to-3d encoder
             (z_box, _), (z_shape, _) = model.encode_box_and_shape(enc_objs, enc_triples, encoded_enc_points, enc_boxes,
-                                                                  enc_angles, attributes)
+                                                                  enc_angles, attributes) # enc_objs : objs, enc_triples : triples, encoded_enc_points : shape_gt, enc_boxes : box_gt
 
             if args.manipulate:
+                # generate box(boxes_pred) and shape(points_pred) (and angle(angles_pred)) from graph-to-3d decoder
                 boxes_pred, points_pred, keep = model.decoder_with_changes_boxes_and_shape(z_box, z_shape, dec_objs,
                                                                                            dec_triples, attributes, missing_nodes, manipulated_nodes, atlas)
                 if with_angles:
@@ -415,7 +428,7 @@ def validate_constrains_loop_w_changes(testdataloader, model, with_diversity=Tru
                             all_diversity_chamfer.append(np.mean(sequence_diversity))
         bp = []
         for i in range(len(keep)):
-            if keep[i] == 0:
+            if keep[i] == 0: # if the node changed
                 bp.append(boxes_pred[i].cpu().detach())
             else:
                 bp.append(dec_tight_boxes[i,:6].cpu().detach())
@@ -423,6 +436,7 @@ def validate_constrains_loop_w_changes(testdataloader, model, with_diversity=Tru
         all_pred_boxes.append(boxes_pred.cpu().detach())
 
         # compute relationship constraints accuracy through simple geometric rules
+        # dec_triples : 3DSSG triples (GT) vs spatial relationship from pred_boxes (generated) -> compare relationship
         accuracy = validate_constrains_changes(dec_triples, boxes_pred, dec_tight_boxes, keep, model.vocab, accuracy,
                                                with_norm=model.type_ != 'sln')
         accuracy_in_orig_graph = validate_constrains_changes(dec_triples, torch.stack(bp, 0), dec_tight_boxes, keep,
@@ -677,6 +691,7 @@ def validate_constrains_loop(testdataloader, model, with_diversity=True, with_an
         print("\tAngle (Std.) %s = %f" % (k, np.mean(all_diversity_angles)))
 
     keys = list(accuracy.keys())
+    print(keys)
     for dic, typ in [(accuracy, "acc")]:
 
         print('{} & {:.2f} & {:.2f} & {:.2f} & {:.2f} &{:.2f} & {:.2f}'.format(typ, np.mean([np.mean(dic[keys[0]]), np.mean(dic[keys[1]])]),
